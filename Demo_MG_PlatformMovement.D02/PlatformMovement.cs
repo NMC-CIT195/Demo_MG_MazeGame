@@ -96,8 +96,8 @@ namespace Demo_MG_PlatformMovement
             player.Active = true;
 
             // set the player's initial speed
-            player.SpeedHorizontal = 2;
-            player.SpeedVertical = 2;
+            player.SpeedHorizontal = 5;
+            player.SpeedVertical = 5;
 
             base.Initialize();
         }
