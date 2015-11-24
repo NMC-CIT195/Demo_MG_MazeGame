@@ -9,13 +9,20 @@ using System.Collections.Generic;
 
 namespace Demo_MG_PlatformMovement
 {
+    public enum GameAction
+    {
+        None,
+        PlayerRight,
+        PlayerLeft,
+        PlayerUp,
+        Quit
+    }
+
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
     public class PlatformMovement : Game
     {
-
-
         // add code to allow Windows message boxes when running in a Windows environment
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern uint MessageBox(IntPtr hWnd, String text, String caption, uint type);
@@ -33,10 +40,19 @@ namespace Demo_MG_PlatformMovement
         private const int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
 
         // wall objects
-        Wall wall01;
-        Wall wall02;
-        Wall wall03;
-        Wall wall04;
+        private Wall wall01;
+        private Wall wall02;
+        private Wall wall03;
+        private Wall wall04;
+
+        // player object
+        private Player player;
+
+        GameAction playerGameAction;
+
+        // keyboard state objects to track a single keyboard press
+        KeyboardState newState;
+        KeyboardState oldState;
 
         // declare a GraphicsDeviceManager object
         GraphicsDeviceManager graphics;
@@ -68,6 +84,12 @@ namespace Demo_MG_PlatformMovement
             wall01.Active = true;
             wall02 = new Wall(Content, "wall", new Vector2(WINDOW_WIDTH - CELL_WIDTH, WINDOW_HEIGHT - CELL_HEIGHT));
             wall02.Active = true;
+
+            player = new Player(Content, new Vector2(CELL_WIDTH * 2, WINDOW_HEIGHT - CELL_HEIGHT));
+            player.Active = true;
+
+            player.SpeedHorizontal = 2;
+            player.SpeedVertical = 2;
 
             base.Initialize();
         }
@@ -104,7 +126,38 @@ namespace Demo_MG_PlatformMovement
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            playerGameAction = GetKeyboardEvents();
+
+            switch (playerGameAction)
+            {
+                case GameAction.None:
+                    break;
+
+                case GameAction.PlayerRight:
+                    if (!PlayerHitWall(wall02))
+                    {
+                        player.PlayerDirection = Player.Direction.Right;
+                        player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
+                    }
+                    break;
+
+                case GameAction.PlayerLeft:
+                    if (!PlayerHitWall(wall01))
+                    {
+                        player.PlayerDirection = Player.Direction.Left;
+                        player.Position = new Vector2(player.Position.X - player.SpeedHorizontal, player.Position.Y);
+                    }
+                    break;
+
+                case GameAction.PlayerUp:
+                    break;
+
+                case GameAction.Quit:
+                    break;
+
+                default:
+                    break;
+            }
 
             base.Update(gameTime);
         }
@@ -122,9 +175,51 @@ namespace Demo_MG_PlatformMovement
             wall01.Draw(spriteBatch);
             wall02.Draw(spriteBatch);
 
+            player.Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// get keyboard events
+        /// </summary>
+        /// <returns>GameAction</returns>
+        private GameAction GetKeyboardEvents()
+        {
+            GameAction playerGameAction = GameAction.None;
+
+            newState = Keyboard.GetState();
+
+            if (CheckKey(Keys.Right) == true)
+            {
+                playerGameAction = GameAction.PlayerRight;
+            }
+            if (CheckKey(Keys.Left) == true)
+            {
+                playerGameAction = GameAction.PlayerLeft;
+            }
+
+            oldState = newState;
+
+            return playerGameAction;
+        }
+
+        /// <summary>
+        /// check the current state of the keyboard against the previous state
+        /// </summary>
+        /// <param name="theKey">bool new key press</param>
+        /// <returns></returns>
+        private bool CheckKey(Keys theKey)
+        {
+            return newState.IsKeyDown(theKey);
+            //return oldState.IsKeyDown(theKey) && newState.IsKeyUp(theKey);
+        }
+
+        private bool PlayerHitWall(Wall wall)
+        {
+            return player.BoundingRectangle.Intersects(wall.BoundingRectangle);
         }
     }
 }
