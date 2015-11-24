@@ -10,31 +10,17 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Demo_MG_PlatformMovement
 {
-    public class Player
+    public class Wall
     {
-        #region ENUMS
-
-        public enum Direction
-        {
-            Left,
-            Right
-        }
-
-        #endregion
-
         #region FIELDS
 
         private ContentManager _contentManager;
-        private Texture2D _spriteRight;
-        private Texture2D _spriteLeft;
-        private int _spriteWidth;
-        private int _spriteHeight;
+        private string _spriteName;
+        private Texture2D _sprite;
         private Vector2 _position;
         private Vector2 _center;
-        private int _speedHorizontal;
-        private int _speedVertical;
-        private Direction _DirectionOfTravel;
-        private Rectangle _boundingRectangle;
+        private Rectangle _boundingRectangle;       
+        
         private bool _active;
 
         #endregion
@@ -47,14 +33,20 @@ namespace Demo_MG_PlatformMovement
             set { _contentManager = value; }
         }
 
+        public string SpriteName
+        {
+            get { return _spriteName; }
+            set { _spriteName = value; }
+        }
+
         public Vector2 Position
         {
             get { return _position; }
             set
             {
                 _position = value;
-                _center = new Vector2(_position.X + (_spriteWidth / 2), _position.Y + (_spriteHeight / 2));
-                _boundingRectangle = new Rectangle((int)_position.X, (int)_position.Y, _spriteWidth, _spriteHeight);
+                _center = new Vector2(_position.X + (_sprite.Width / 2), _position.Y + (_sprite.Height / 2));
+                _boundingRectangle = new Rectangle((int)_position.X, (int)_position.Y, _sprite.Width, _sprite.Height);
             }
         }
 
@@ -63,25 +55,7 @@ namespace Demo_MG_PlatformMovement
             get { return _center; }
             set { _center = value; }
         }
-
-        public int SpeedHorizontal
-        {
-            get { return _speedHorizontal; }
-            set { _speedHorizontal = value; }
-        }
-
-        public int SpeedVertical
-        {
-            get { return _speedVertical; }
-            set { _speedVertical = value; }
-        }
-
-        public Direction PlayerDirection
-        {
-            get { return _DirectionOfTravel; }
-            set { _DirectionOfTravel = value; }
-        }
-
+        
         public Rectangle BoundingRectangle
         {
             get { return _boundingRectangle; }
@@ -104,30 +78,27 @@ namespace Demo_MG_PlatformMovement
         /// <param name="contentManager">game content manager object</param>
         /// <param name="spriteName">file name of sprite</param>
         /// <param name="position">vector position of Wall</param>
-        public Player(
+        public Wall(
             ContentManager contentManager,
+            string spriteName,
             Vector2 position
             )
         {
             _contentManager = contentManager;
+            _spriteName = spriteName;
             _position = position;
 
             // load the Wall image into the Texture2D for the Wall sprite
-            _spriteLeft = _contentManager.Load<Texture2D>("player_left");
-            _spriteRight = _contentManager.Load<Texture2D>("player_right");
-
-            _spriteWidth = _spriteLeft.Width;
-            _spriteHeight = _spriteLeft.Height;
+            _sprite = _contentManager.Load<Texture2D>(_spriteName);
 
             // set the initial center and bounding rectangle for the wall
-            _center = new Vector2(position.X + (_spriteWidth / 2), position.Y + (_spriteHeight / 2));
-            _boundingRectangle = new Rectangle((int)position.X, (int)position.Y, _spriteWidth, _spriteHeight);
+            _center = new Vector2(position.X + (_sprite.Width / 2), position.Y + (_sprite.Height / 2));
+            _boundingRectangle = new Rectangle((int)position.X, (int)position.Y, _sprite.Width, _sprite.Height);
         }
 
         #endregion
 
         #region METHODS
-
         /// <summary>
         /// add Wall sprite to the SpriteBatch object
         /// </summary>
@@ -137,18 +108,10 @@ namespace Demo_MG_PlatformMovement
             // only draw the Wall if it is active
             if (_active)
             {
-                if (_DirectionOfTravel == Direction.Right)
-                {
-                    spriteBatch.Draw(_spriteRight, _position, Color.White);                    
-                }
-                else
-                {
-                    spriteBatch.Draw(_spriteLeft, _position, Color.White);     
-                }
+                spriteBatch.Draw(_sprite, _position, Color.White);
             }
         }
 
         #endregion
     }
 }
-

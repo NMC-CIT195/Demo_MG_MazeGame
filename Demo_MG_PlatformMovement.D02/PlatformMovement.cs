@@ -15,6 +15,7 @@ namespace Demo_MG_PlatformMovement
         PlayerRight,
         PlayerLeft,
         PlayerUp,
+        PlayerDown,
         Quit
     }
 
@@ -40,6 +41,7 @@ namespace Demo_MG_PlatformMovement
         private const int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
 
         // wall objects
+        private List<Wall> walls;
         private Wall wall01;
         private Wall wall02;
 
@@ -79,10 +81,15 @@ namespace Demo_MG_PlatformMovement
         protected override void Initialize()
         {
             // add floors, walls, and ceilings
+            walls = new List<Wall>();
+
             wall01 = new Wall(Content, "wall", new Vector2(0, WINDOW_HEIGHT - CELL_HEIGHT));
             wall01.Active = true;
+            walls.Add(wall01);
+
             wall02 = new Wall(Content, "wall", new Vector2(WINDOW_WIDTH - CELL_WIDTH, WINDOW_HEIGHT - CELL_HEIGHT));
             wall02.Active = true;
+            walls.Add(wall02);
 
             // add the player
             player = new Player(Content, new Vector2(CELL_WIDTH * 2, WINDOW_HEIGHT - CELL_HEIGHT));
@@ -133,25 +140,40 @@ namespace Demo_MG_PlatformMovement
 
                 // move player right
                 case GameAction.PlayerRight:
-                    if (!PlayerHitWall(wall02))
+                    if (!PlayerHitWall(wall02) && (player.Position.X + CELL_WIDTH < WINDOW_WIDTH))
                     {
                         player.PlayerDirection = Player.Direction.Right;
                         player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
-                
+
                 //move player left
                 case GameAction.PlayerLeft:
-                    if (!PlayerHitWall(wall01))
+                    if (!PlayerHitWall(wall01) && (player.Position.X > 0))
                     {
                         player.PlayerDirection = Player.Direction.Left;
                         player.Position = new Vector2(player.Position.X - player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
 
+                // move player up
                 case GameAction.PlayerUp:
+                    if (!PlayerHitWall(wall02) && (player.Position.Y > 0))
+                    {
+                        player.PlayerDirection = Player.Direction.Up;
+                        player.Position = new Vector2(player.Position.X, player.Position.Y - player.SpeedVertical);
+                    }
                     break;
-                
+
+                //move player down
+                case GameAction.PlayerDown:
+                    if (!PlayerHitWall(wall01) && (player.Position.Y + CELL_HEIGHT < WINDOW_HEIGHT))
+                    {
+                        player.PlayerDirection = Player.Direction.Down;
+                        player.Position = new Vector2(player.Position.X, player.Position.Y + player.SpeedVertical);
+                    }
+                    break;
+
                 // quit game
                 case GameAction.Quit:
                     Exit();
@@ -194,18 +216,24 @@ namespace Demo_MG_PlatformMovement
 
             newState = Keyboard.GetState();
 
-            
+
             if (CheckKey(Keys.Right) == true)
             {
                 playerGameAction = GameAction.PlayerRight;
             }
-
-            if (CheckKey(Keys.Left) == true)
+            else if (CheckKey(Keys.Left) == true)
             {
                 playerGameAction = GameAction.PlayerLeft;
             }
-
-            if (CheckKey(Keys.Escape) == true)
+            else if (CheckKey(Keys.Up) == true)
+            {
+                playerGameAction = GameAction.PlayerUp;
+            }
+            else if (CheckKey(Keys.Down) == true)
+            {
+                playerGameAction = GameAction.PlayerDown;
+            }
+            else if (CheckKey(Keys.Escape) == true)
             {
                 playerGameAction = GameAction.Quit;
             }
