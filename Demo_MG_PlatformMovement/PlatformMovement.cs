@@ -42,12 +42,11 @@ namespace Demo_MG_PlatformMovement
         // wall objects
         private Wall wall01;
         private Wall wall02;
-        private Wall wall03;
-        private Wall wall04;
 
         // player object
         private Player player;
 
+        // variable to hold the player's current game action
         GameAction playerGameAction;
 
         // keyboard state objects to track a single keyboard press
@@ -85,9 +84,11 @@ namespace Demo_MG_PlatformMovement
             wall02 = new Wall(Content, "wall", new Vector2(WINDOW_WIDTH - CELL_WIDTH, WINDOW_HEIGHT - CELL_HEIGHT));
             wall02.Active = true;
 
+            // add the player
             player = new Player(Content, new Vector2(CELL_WIDTH * 2, WINDOW_HEIGHT - CELL_HEIGHT));
             player.Active = true;
 
+            // set the player's initial speed
             player.SpeedHorizontal = 2;
             player.SpeedVertical = 2;
 
@@ -103,8 +104,7 @@ namespace Demo_MG_PlatformMovement
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // wall and player sprites loaded when instantiated
-
+            // Note: wall and player sprites loaded when instantiated
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Demo_MG_PlatformMovement
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here
+            // Unload any non ContentManager content here
         }
 
         /// <summary>
@@ -123,9 +123,7 @@ namespace Demo_MG_PlatformMovement
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
+            // get the player's current action based on a keyboard event
             playerGameAction = GetKeyboardEvents();
 
             switch (playerGameAction)
@@ -133,6 +131,7 @@ namespace Demo_MG_PlatformMovement
                 case GameAction.None:
                     break;
 
+                // move player right
                 case GameAction.PlayerRight:
                     if (!PlayerHitWall(wall02))
                     {
@@ -140,7 +139,8 @@ namespace Demo_MG_PlatformMovement
                         player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
-
+                
+                //move player left
                 case GameAction.PlayerLeft:
                     if (!PlayerHitWall(wall01))
                     {
@@ -151,8 +151,10 @@ namespace Demo_MG_PlatformMovement
 
                 case GameAction.PlayerUp:
                     break;
-
+                
+                // quit game
                 case GameAction.Quit:
+                    Exit();
                     break;
 
                 default:
@@ -192,13 +194,20 @@ namespace Demo_MG_PlatformMovement
 
             newState = Keyboard.GetState();
 
+            
             if (CheckKey(Keys.Right) == true)
             {
                 playerGameAction = GameAction.PlayerRight;
             }
+
             if (CheckKey(Keys.Left) == true)
             {
                 playerGameAction = GameAction.PlayerLeft;
+            }
+
+            if (CheckKey(Keys.Escape) == true)
+            {
+                playerGameAction = GameAction.Quit;
             }
 
             oldState = newState;
@@ -213,10 +222,18 @@ namespace Demo_MG_PlatformMovement
         /// <returns></returns>
         private bool CheckKey(Keys theKey)
         {
+            // allows the key to be held down
             return newState.IsKeyDown(theKey);
-            //return oldState.IsKeyDown(theKey) && newState.IsKeyUp(theKey);
+
+            // player must continue to tap the key
+            //return oldState.IsKeyDown(theKey) && newState.IsKeyUp(theKey); 
         }
 
+        /// <summary>
+        /// test for player collision with a wall object
+        /// </summary>
+        /// <param name="wall">wall object to test</param>
+        /// <returns>true if collision</returns>
         private bool PlayerHitWall(Wall wall)
         {
             return player.BoundingRectangle.Intersects(wall.BoundingRectangle);

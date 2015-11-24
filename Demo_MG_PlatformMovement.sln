@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_PlatformMovement", "Demo_MG_PlatformMovement\Demo_MG_PlatformMovement.csproj", "{DF581FF9-C57D-4BDD-99E1-EC809F271310}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_PlatformMovement.D01", "Demo_MG_PlatformMovement\Demo_MG_PlatformMovement.D01.csproj", "{DF581FF9-C57D-4BDD-99E1-EC809F271310}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
