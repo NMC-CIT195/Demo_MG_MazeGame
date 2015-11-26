@@ -9,15 +9,13 @@ using System.Collections.Generic;
 
 namespace Demo_MG_PlatformMovement
 {
-    /// <summary>
-    /// enumeration of all possible game actions
-    /// </summary>
     public enum GameAction
     {
         None,
         PlayerRight,
         PlayerLeft,
         PlayerUp,
+        PlayerDown,
         Quit
     }
 
@@ -35,14 +33,15 @@ namespace Demo_MG_PlatformMovement
         private const int CELL_HEIGHT = 64;
 
         // set the map size in cells
-        private const int MAP_CELL_ROW_COUNT = 8;
-        private const int MAP_CELL_COLUMN_COUNT = 10;
+        private const int MAP_CELL_ROW_COUNT = 9;
+        private const int MAP_CELL_COLUMN_COUNT = 9;
 
         // set the window size
         private const int WINDOW_WIDTH = MAP_CELL_COLUMN_COUNT * CELL_WIDTH;
         private const int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
 
         // wall objects
+        private List<Wall> walls;
         private Wall wall01;
         private Wall wall02;
 
@@ -82,13 +81,14 @@ namespace Demo_MG_PlatformMovement
         protected override void Initialize()
         {
             // add floors, walls, and ceilings
-            wall01 = new Wall(Content, "wall", new Vector2(0, WINDOW_HEIGHT - CELL_HEIGHT));
+            walls = new List<Wall>();
+
+            wall01 = new Wall(Content, "wall", new Vector2(4 * CELL_WIDTH, 4 * CELL_HEIGHT));
             wall01.Active = true;
-            wall02 = new Wall(Content, "wall", new Vector2(WINDOW_WIDTH - CELL_WIDTH, WINDOW_HEIGHT - CELL_HEIGHT));
-            wall02.Active = true;
+            walls.Add(wall01);
 
             // add the player
-            player = new Player(Content, new Vector2(CELL_WIDTH * 2, WINDOW_HEIGHT - CELL_HEIGHT));
+            player = new Player(Content, new Vector2(2 * CELL_WIDTH, 2 * CELL_HEIGHT));
             player.Active = true;
 
             // set the player's initial speed
@@ -136,25 +136,40 @@ namespace Demo_MG_PlatformMovement
 
                 // move player right
                 case GameAction.PlayerRight:
-                    if (!PlayerHitWall(wall02))
+                    if (CanMove(Player.Direction.Right, wall01))
                     {
                         player.PlayerDirection = Player.Direction.Right;
                         player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
-                
+
                 //move player left
                 case GameAction.PlayerLeft:
-                    if (!PlayerHitWall(wall01))
+                    if (CanMove(Player.Direction.Left, wall01))
                     {
                         player.PlayerDirection = Player.Direction.Left;
                         player.Position = new Vector2(player.Position.X - player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
 
+                // move player up
                 case GameAction.PlayerUp:
+                    if (CanMove(Player.Direction.Up, wall01))
+                    {
+                        player.PlayerDirection = Player.Direction.Up;
+                        player.Position = new Vector2(player.Position.X, player.Position.Y - player.SpeedVertical);
+                    }
                     break;
-                
+
+                //move player down
+                case GameAction.PlayerDown:
+                    if (CanMove(Player.Direction.Down, wall01))
+                    {
+                        player.PlayerDirection = Player.Direction.Down;
+                        player.Position = new Vector2(player.Position.X, player.Position.Y + player.SpeedVertical);
+                    }
+                    break;
+
                 // quit game
                 case GameAction.Quit:
                     Exit();
@@ -178,8 +193,7 @@ namespace Demo_MG_PlatformMovement
             spriteBatch.Begin();
 
             wall01.Draw(spriteBatch);
-            wall02.Draw(spriteBatch);
-
+  
             player.Draw(spriteBatch);
 
             spriteBatch.End();
@@ -206,6 +220,14 @@ namespace Demo_MG_PlatformMovement
             {
                 playerGameAction = GameAction.PlayerLeft;
             }
+            else if (CheckKey(Keys.Up) == true)
+            {
+                playerGameAction = GameAction.PlayerUp;
+            }
+            else if (CheckKey(Keys.Down) == true)
+            {
+                playerGameAction = GameAction.PlayerDown;
+            }
             else if (CheckKey(Keys.Escape) == true)
             {
                 playerGameAction = GameAction.Quit;
@@ -230,6 +252,54 @@ namespace Demo_MG_PlatformMovement
             //return oldState.IsKeyDown(theKey) && newState.IsKeyUp(theKey); 
         }
 
+        /// <summary>
+        /// determine if player can continue moving in a given direction
+        /// </summary>
+        /// <param name="playerDirection">current direction of player travel</param>
+        /// <param name="wall">wall object to test against</param>
+        /// <returns></returns>
+        private bool CanMove(Player.Direction playerDirection, Wall wall)
+        {
+            bool playerCanMove = true;
+
+            if (PlayerHitWall(wall))
+            {
+                playerCanMove = false;
+
+                switch (playerDirection)
+                {
+                    case Player.Direction.Left:
+                        if (player.BoundingRectangle.Right <= wall.BoundingRectangle.Left + player.SpeedHorizontal) 
+                        {
+                            playerCanMove = true;
+                        }
+                        break;
+                    case Player.Direction.Right:
+                        if (player.BoundingRectangle.Left >= wall.BoundingRectangle.Right - player.SpeedHorizontal)
+                        {
+                            playerCanMove = true;
+                        }
+                        break;
+                    case Player.Direction.Up:
+                        if (player.BoundingRectangle.Bottom <= wall.BoundingRectangle.Top + player.SpeedVertical)
+                        {
+                            playerCanMove = true;
+                        }
+                        break;
+                    case Player.Direction.Down:
+                        if (player.BoundingRectangle.Top >= wall.BoundingRectangle.Bottom - player.SpeedVertical)
+                        {
+                            playerCanMove = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return playerCanMove;
+        }
+        
         /// <summary>
         /// test for player collision with a wall object
         /// </summary>

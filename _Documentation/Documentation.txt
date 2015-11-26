@@ -1,0 +1,16 @@
+﻿Solution: Demo_Percistence_GameRoomObject
+Author: John E Velis
+Created: 11/5/2015
+Last Modified: 11/5/2015
+
+Project: D01
+Description: Simple reading and writing using ReadAllText and WriteAllText
+
+Project: D02
+Description: 
+
+Project: D03
+Description: 
+
+Project: D04
+Description: 
