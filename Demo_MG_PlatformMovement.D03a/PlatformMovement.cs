@@ -42,8 +42,6 @@ namespace Demo_MG_PlatformMovement
 
         // wall objects
         private List<Wall> walls;
-        private Wall wall01;
-        private Wall wall02;
 
         // map array
         private int[,] map;

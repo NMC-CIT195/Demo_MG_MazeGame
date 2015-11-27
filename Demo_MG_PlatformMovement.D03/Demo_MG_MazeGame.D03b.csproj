@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DF581FF9-C57D-4BDD-99E1-EC809F271310}</ProjectGuid>
+    <ProjectGuid>{56F9010C-21BB-493A-A621-9A7BCD112868}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Demo_MG_PlatformMovement.D01</RootNamespace>
-    <AssemblyName>Demo_MG_PlatformMovement.D01</AssemblyName>
+    <RootNamespace>Demo_MG_MazeGame.D03b</RootNamespace>
+    <AssemblyName>Demo_MG_MazeGame.D03b</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <MonoGameContentBuilderExe>
@@ -39,9 +39,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="PlatformMovement.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Wall.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,8 +54,10 @@
   <ItemGroup>
     <Content Include="Artwork\player.png" />
     <Content Include="Artwork\wall.png" />
+    <Content Include="Content\player_down.png" />
     <Content Include="Content\player_left.png" />
     <Content Include="Content\player_right.png" />
+    <Content Include="Content\player_up.png" />
     <Content Include="Content\wall.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>

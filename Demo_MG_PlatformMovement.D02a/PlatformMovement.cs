@@ -45,9 +45,6 @@ namespace Demo_MG_PlatformMovement
         private Wall wall01;
         private Wall wall02;
 
-        // map array
-        private int[,] map;
-
         // player object
         private Player player;
 
@@ -86,15 +83,17 @@ namespace Demo_MG_PlatformMovement
             // add floors, walls, and ceilings
             walls = new List<Wall>();
 
-            BuildMap();
+            wall01 = new Wall(Content, "wall", new Vector2(4 * CELL_WIDTH, 4 * CELL_HEIGHT));
+            wall01.Active = true;
+            walls.Add(wall01);
 
             // add the player
-            player = new Player(Content, new Vector2(1 * CELL_WIDTH, 1 * CELL_HEIGHT));
+            player = new Player(Content, new Vector2(2 * CELL_WIDTH, 2 * CELL_HEIGHT));
             player.Active = true;
 
             // set the player's initial speed
-            player.SpeedHorizontal = 5;
-            player.SpeedVertical = 5;
+            player.SpeedHorizontal = 10;
+            player.SpeedVertical = 10;
 
             base.Initialize();
         }
@@ -138,7 +137,7 @@ namespace Demo_MG_PlatformMovement
                 // move player right
                 case GameAction.PlayerRight:
                     player.PlayerDirection = Player.Direction.Right;
-
+                    
                     // only move player if allowed
                     if (CanMove())
                     {
@@ -201,7 +200,7 @@ namespace Demo_MG_PlatformMovement
 
             spriteBatch.Begin();
 
-            DrawWalls(spriteBatch);
+            wall01.Draw(spriteBatch);
 
             player.Draw(spriteBatch);
 
@@ -219,7 +218,7 @@ namespace Demo_MG_PlatformMovement
             GameAction playerGameAction = GameAction.None;
 
             newState = Keyboard.GetState();
-
+            
             if (CheckKey(Keys.Right) == true)
             {
                 playerGameAction = GameAction.PlayerRight;
@@ -269,13 +268,9 @@ namespace Demo_MG_PlatformMovement
             bool canMove = true;
 
             // do not allow movement into wall
-            foreach (Wall wall in walls)
+            if (WallCollision(wall01))
             {
-                if (WallCollision(wall))
-                {
-                    canMove = false;
-                    continue;
-                }
+                canMove = false;
             }
 
             return canMove;
@@ -357,42 +352,6 @@ namespace Demo_MG_PlatformMovement
             }
 
             return wallCollision;
-        }
-
-        private void BuildMap()
-        {
-            // Note: initialized array size must equal the MAP_CELL_COLUMN_COUNT and MAP_CELL_ROW_COUNT
-            map = new int[,]
-            {
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
-
-            for (int row = 0; row < MAP_CELL_ROW_COUNT; row++)
-            {
-                for (int column = 0; column < MAP_CELL_COLUMN_COUNT; column++)
-                {
-                    if (map[row, column] == 1)
-                    {
-                        walls.Add(new Wall(Content, "wall", new Vector2(row * CELL_WIDTH, column * CELL_HEIGHT)));
-                    }
-                }
-            }
-        }
-
-        private void DrawWalls(SpriteBatch spriteBatch)
-        {
-            foreach (Wall wall in walls)
-            {
-                wall.Draw(spriteBatch);
-            }
         }
     }
 }

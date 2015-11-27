@@ -1,7 +1,9 @@
-﻿Solution:		Demo_Percistence_GameRoomObject
+﻿Solution:		Demo_MG_MazeGame
 Author:			John E Velis
 Created:		11/5/2015
 Last Modified:	11/27/2015
+Note:			Demonstrations with an "a" suffix use simple player sprite
+				Demonstrations with a "b" suffix use a four player sprites, one for each direction
 
 Project:		D01
 Description:	Simple left and right movement and collisions with two walls
@@ -11,7 +13,11 @@ Description:	Collision checking against one wall object in all directions
 				Player is moved next to wall on all collisions
 
 Project:		D03
-Description:	
+Description:	Uses a smaller player to navigate the corridors
+				Add map as an array of integers with cells representing the game objects in each cell
+				Add a list of walls based on the map array
+				Draws the list of walls
+				Collision checking against the list of walls
 
 Project:		D04
 Description:	
