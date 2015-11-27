@@ -2,19 +2,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D01b", "Demo_MG_PlatformMovement.D01\Demo_MG_MazeGame.D01b.csproj", "{DF581FF9-C57D-4BDD-99E1-EC809F271310}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D01b", "Demo_MG_MazeGame.D01b\Demo_MG_MazeGame.D01b.csproj", "{DF581FF9-C57D-4BDD-99E1-EC809F271310}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D02b", "Demo_MG_PlatformMovement.D02\Demo_MG_MazeGame.D02b.csproj", "{AFAE2AA9-600D-4EE8-AC99-2EC369267E99}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D02b", "Demo_MG_MazeGame.D02b\Demo_MG_MazeGame.D02b.csproj", "{AFAE2AA9-600D-4EE8-AC99-2EC369267E99}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_Documentation", "_Documentation\_Documentation.csproj", "{3503CC3A-008C-4D94-9E9A-E1E954E75F9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D03b", "Demo_MG_PlatformMovement.D03\Demo_MG_MazeGame.D03b.csproj", "{56F9010C-21BB-493A-A621-9A7BCD112868}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D03b", "Demo_MG_MazeGame.D03b\Demo_MG_MazeGame.D03b.csproj", "{56F9010C-21BB-493A-A621-9A7BCD112868}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D01a", "Demo_MG_PlatformMovement.D01a\Demo_MG_MazeGame.D01a.csproj", "{A4C72BDC-F290-444F-AC7A-503BE81D6FD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D01a", "Demo_MG_MazeGame.D01a\Demo_MG_MazeGame.D01a.csproj", "{A4C72BDC-F290-444F-AC7A-503BE81D6FD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D02a", "Demo_MG_PlatformMovement.D02a\Demo_MG_MazeGame.D02a.csproj", "{2E821C78-FF3D-4705-BC0E-7275D4B9B28F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D02a", "Demo_MG_MazeGame.D02a\Demo_MG_MazeGame.D02a.csproj", "{2E821C78-FF3D-4705-BC0E-7275D4B9B28F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D03a", "Demo_MG_PlatformMovement.D03a\Demo_MG_MazeGame.D03a.csproj", "{F83DAF29-F2B2-42AE-BDC8-CC20351010AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D03a", "Demo_MG_MazeGame.D03a\Demo_MG_MazeGame.D03a.csproj", "{F83DAF29-F2B2-42AE-BDC8-CC20351010AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
