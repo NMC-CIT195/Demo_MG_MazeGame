@@ -137,7 +137,8 @@ namespace Demo_MG_PlatformMovement
                 // move player right
                 case GameAction.PlayerRight:
                     player.PlayerDirection = Player.Direction.Right;
-
+                    
+                    // only move player if allowed
                     if (CanMove())
                     {
                         player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
@@ -148,6 +149,7 @@ namespace Demo_MG_PlatformMovement
                 case GameAction.PlayerLeft:
                     player.PlayerDirection = Player.Direction.Left;
 
+                    // only move player if allowed
                     if (CanMove())
                     {
                         player.Position = new Vector2(player.Position.X - player.SpeedHorizontal, player.Position.Y);
@@ -159,6 +161,7 @@ namespace Demo_MG_PlatformMovement
                 case GameAction.PlayerUp:
                     player.PlayerDirection = Player.Direction.Up;
 
+                    // only move player if allowed
                     if (CanMove())
                     {
                         player.Position = new Vector2(player.Position.X, player.Position.Y - player.SpeedVertical);
@@ -168,6 +171,7 @@ namespace Demo_MG_PlatformMovement
                 case GameAction.PlayerDown:
                     player.PlayerDirection = Player.Direction.Down;
 
+                    // only move player if allowed
                     if (CanMove())
                     {
                         player.Position = new Vector2(player.Position.X, player.Position.Y + player.SpeedVertical);
@@ -214,8 +218,7 @@ namespace Demo_MG_PlatformMovement
             GameAction playerGameAction = GameAction.None;
 
             newState = Keyboard.GetState();
-
-
+            
             if (CheckKey(Keys.Right) == true)
             {
                 playerGameAction = GameAction.PlayerRight;
@@ -256,10 +259,15 @@ namespace Demo_MG_PlatformMovement
             //return oldState.IsKeyDown(theKey) && newState.IsKeyUp(theKey); 
         }
 
+        /// <summary>
+        /// check to confirm that player movement is allowed
+        /// </summary>
+        /// <returns></returns>
         private bool CanMove()
         {
             bool canMove = true;
 
+            // do not allow movement into wall
             if (WallCollision(wall01))
             {
                 canMove = false;
@@ -277,46 +285,64 @@ namespace Demo_MG_PlatformMovement
         {
             bool wallCollision = false;
 
+            // create a Rectangle object for the new move's position
             Rectangle newPlayerPosition = player.BoundingRectangle;
 
+            // test the new move's position for a collision with the wall
             switch (player.PlayerDirection)
             {
                 case Player.Direction.Left:
+                    // set the position of the new move's rectangle
                     newPlayerPosition.Offset(-player.SpeedHorizontal, 0);
 
+                    // test for a collision with the new move and the wall
                     if (newPlayerPosition.Intersects(wall.BoundingRectangle))
                     {
                         wallCollision = true;
+
+                        // move player next to wall
                         player.Position = new Vector2(wall.BoundingRectangle.Right, player.Position.Y);
                     }
                     break;
 
                 case Player.Direction.Right:
+                    // set the position of the new move's rectangle
                     newPlayerPosition.Offset(player.SpeedHorizontal, 0);
 
+                    // test for a collision with the new move and the wall
                     if (newPlayerPosition.Intersects(wall.BoundingRectangle))
                     {
                         wallCollision = true;
+
+                        // move player next to wall
                         player.Position = new Vector2(wall.BoundingRectangle.Left - player.BoundingRectangle.Width, player.Position.Y);
                     }
                     break;
 
                 case Player.Direction.Up:
+                    // set the position of the new move's rectangle
                     newPlayerPosition.Offset(0, -player.SpeedVertical);
 
+                    // test for a collision with the new move and the wall
                     if (newPlayerPosition.Intersects(wall.BoundingRectangle))
                     {
                         wallCollision = true;
+
+                        // move player next to wall
                         player.Position = new Vector2(player.Position.X, wall.BoundingRectangle.Bottom);
                     }
                     break;
 
                 case Player.Direction.Down:
+                    // set the position of the new move's rectangle
                     newPlayerPosition.Offset(0, player.SpeedVertical);
 
+                    // test for a collision with the new move and the wall
                     if (newPlayerPosition.Intersects(wall.BoundingRectangle))
                     {
                         wallCollision = true;
+
+                        // move player next to wall
                         player.Position = new Vector2(player.Position.X, wall.BoundingRectangle.Top - player.BoundingRectangle.Height);
                     }
                     break;

@@ -87,6 +87,7 @@ namespace Demo_MG_PlatformMovement
             _contentManager = contentManager;
             _spriteName = spriteName;
             _position = position;
+            _active = true;
 
             // load the Wall image into the Texture2D for the Wall sprite
             _sprite = _contentManager.Load<Texture2D>(_spriteName);

@@ -1,16 +1,17 @@
-﻿Solution: Demo_Percistence_GameRoomObject
-Author: John E Velis
-Created: 11/5/2015
-Last Modified: 11/5/2015
+﻿Solution:		Demo_Percistence_GameRoomObject
+Author:			John E Velis
+Created:		11/5/2015
+Last Modified:	11/27/2015
 
-Project: D01
-Description: Simple reading and writing using ReadAllText and WriteAllText
+Project:		D01
+Description:	Simple left and right movement and collisions with two walls
 
-Project: D02
-Description: 
+Project:		D02
+Description:	Collision checking against one wall object in all directions
+				Player is moved next to wall on all collisions
 
-Project: D03
-Description: 
+Project:		D03
+Description:	
 
-Project: D04
-Description: 
+Project:		D04
+Description:	
