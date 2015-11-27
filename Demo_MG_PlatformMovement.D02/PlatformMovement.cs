@@ -92,8 +92,8 @@ namespace Demo_MG_PlatformMovement
             player.Active = true;
 
             // set the player's initial speed
-            player.SpeedHorizontal = 5;
-            player.SpeedVertical = 5;
+            player.SpeedHorizontal = 10;
+            player.SpeedVertical = 10;
 
             base.Initialize();
         }
@@ -136,36 +136,40 @@ namespace Demo_MG_PlatformMovement
 
                 // move player right
                 case GameAction.PlayerRight:
-                    if (CanMove(Player.Direction.Right, wall01))
+                    player.PlayerDirection = Player.Direction.Right;
+
+                    if (CanMove())
                     {
-                        player.PlayerDirection = Player.Direction.Right;
                         player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
 
                 //move player left
                 case GameAction.PlayerLeft:
-                    if (CanMove(Player.Direction.Left, wall01))
+                    player.PlayerDirection = Player.Direction.Left;
+
+                    if (CanMove())
                     {
-                        player.PlayerDirection = Player.Direction.Left;
                         player.Position = new Vector2(player.Position.X - player.SpeedHorizontal, player.Position.Y);
                     }
+
                     break;
 
                 // move player up
                 case GameAction.PlayerUp:
-                    if (CanMove(Player.Direction.Up, wall01))
+                    player.PlayerDirection = Player.Direction.Up;
+
+                    if (CanMove())
                     {
-                        player.PlayerDirection = Player.Direction.Up;
                         player.Position = new Vector2(player.Position.X, player.Position.Y - player.SpeedVertical);
                     }
                     break;
 
-                //move player down
                 case GameAction.PlayerDown:
-                    if (CanMove(Player.Direction.Down, wall01))
+                    player.PlayerDirection = Player.Direction.Down;
+
+                    if (CanMove())
                     {
-                        player.PlayerDirection = Player.Direction.Down;
                         player.Position = new Vector2(player.Position.X, player.Position.Y + player.SpeedVertical);
                     }
                     break;
@@ -252,64 +256,16 @@ namespace Demo_MG_PlatformMovement
             //return oldState.IsKeyDown(theKey) && newState.IsKeyUp(theKey); 
         }
 
-        /// <summary>
-        /// determine if player can continue moving in a given direction
-        /// </summary>
-        /// <param name="playerDirection">current direction of player travel</param>
-        /// <param name="wall">wall object to test against</param>
-        /// <returns></returns>
-        private bool CanMove(Player.Direction playerDirection, Wall wall)
+        private bool CanMove()
         {
-            bool playerCanMove = true;
+            bool canMove = true;
 
-            if (PlayerHitWall(wall))
+            if (WallCollision(wall01))
             {
-                playerCanMove = false;
-
-                switch (playerDirection)
-                {
-                    case Player.Direction.Left:
-                        if (player.BoundingRectangle.Right < wall.BoundingRectangle.Left + player.SpeedHorizontal)
-                        {
-                            playerCanMove = true;
-                        }
-                        else
-                        {
-                            player.Position += new Vector2(player.SpeedHorizontal + 1, 0);
-                        }
-                        break;
-
-                    case Player.Direction.Right:
-                        if (player.BoundingRectangle.Left > wall.BoundingRectangle.Right - player.SpeedHorizontal)
-                        {
-                            playerCanMove = true;
-                        }
-                        else
-                        {
-                            player.Position += new Vector2(-player.SpeedHorizontal - 1, 0);
-                        }
-                        break;
-
-                    case Player.Direction.Up:
-                        if (player.BoundingRectangle.Bottom < wall.BoundingRectangle.Top + player.SpeedVertical)
-                        {
-                            playerCanMove = true;
-                        }
-                        break;
-
-                    case Player.Direction.Down:
-                        if (player.BoundingRectangle.Top > wall.BoundingRectangle.Bottom - player.SpeedVertical)
-                        {
-                            playerCanMove = true;
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
+                canMove = false;
             }
 
-            return playerCanMove;
+            return canMove;
         }
 
         /// <summary>
@@ -317,9 +273,59 @@ namespace Demo_MG_PlatformMovement
         /// </summary>
         /// <param name="wall">wall object to test</param>
         /// <returns>true if collision</returns>
-        private bool PlayerHitWall(Wall wall)
+        private bool WallCollision(Wall wall)
         {
-            return player.BoundingRectangle.Intersects(wall.BoundingRectangle);
+            bool wallCollision = false;
+
+            Rectangle newPlayerPosition = player.BoundingRectangle;
+
+            switch (player.PlayerDirection)
+            {
+                case Player.Direction.Left:
+                    newPlayerPosition.Offset(-player.SpeedHorizontal, 0);
+
+                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
+                    {
+                        wallCollision = true;
+                        player.Position = new Vector2(wall.BoundingRectangle.Right, player.Position.Y);
+                    }
+                    break;
+
+                case Player.Direction.Right:
+                    newPlayerPosition.Offset(player.SpeedHorizontal, 0);
+
+                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
+                    {
+                        wallCollision = true;
+                        player.Position = new Vector2(wall.BoundingRectangle.Left - player.BoundingRectangle.Width, player.Position.Y);
+                    }
+                    break;
+
+                case Player.Direction.Up:
+                    newPlayerPosition.Offset(0, -player.SpeedVertical);
+
+                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
+                    {
+                        wallCollision = true;
+                        player.Position = new Vector2(player.Position.X, wall.BoundingRectangle.Bottom);
+                    }
+                    break;
+
+                case Player.Direction.Down:
+                    newPlayerPosition.Offset(0, player.SpeedVertical);
+
+                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
+                    {
+                        wallCollision = true;
+                        player.Position = new Vector2(player.Position.X, wall.BoundingRectangle.Top - player.BoundingRectangle.Height);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            return wallCollision;
         }
     }
 }
