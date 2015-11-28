@@ -20,4 +20,17 @@ Description:	Uses a smaller player to navigate the corridors
 				Collision checking against the list of walls
 
 Project:		D04
-Description:	
+Description:	Refactor Update() method into ManageGameAction() method
+				Add a SpriteFont object to display the score.
+				Add a game information area and use it to track jewel collection events
+				Add a Jewel class and a list of jewels object
+				Add a green jewel image to content
+				Add a ManageGameObjects() method to handle jewel collection events
+				Modify the BuildMap() method to manage jewels
+
+Project:		D05
+Description:	Add DeathBall class and image file to Content Builder
+				Set game constants to "public static" to allow access from the object classes
+
+
+

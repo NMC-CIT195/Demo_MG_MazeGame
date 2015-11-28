@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 
-namespace Demo_MG_PlatformMovement
+namespace Demo_MG_MazeGame
 {
     public enum GameAction
     {
@@ -379,7 +379,7 @@ namespace Demo_MG_PlatformMovement
                 {
                     if (map[row, column] == 1)
                     {
-                        walls.Add(new Wall(Content, "wall", new Vector2(row * CELL_WIDTH, column * CELL_HEIGHT)));
+                        walls.Add(new Wall(Content, "wall", new Vector2(column * CELL_HEIGHT, row * CELL_WIDTH)));
                     }
                 }
             }

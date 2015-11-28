@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 
-namespace Demo_MG_PlatformMovement
+namespace Demo_MG_MazeGame
 {
     /// <summary>
     /// enumeration of all possible game actions

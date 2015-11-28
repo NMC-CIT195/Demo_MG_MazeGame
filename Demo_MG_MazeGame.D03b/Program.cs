@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Demo_MG_PlatformMovement
+namespace Demo_MG_MazeGame
 {
 #if WINDOWS || LINUX
     /// <summary>
