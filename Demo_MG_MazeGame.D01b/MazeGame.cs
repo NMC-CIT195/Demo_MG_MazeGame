@@ -9,20 +9,22 @@ using System.Collections.Generic;
 
 namespace Demo_MG_MazeGame
 {
+    /// <summary>
+    /// enumeration of all possible game actions
+    /// </summary>
     public enum GameAction
     {
         None,
         PlayerRight,
         PlayerLeft,
         PlayerUp,
-        PlayerDown,
         Quit
     }
 
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class PlatformMovement : Game
+    public class MazeGame : Game
     {
         // add code to allow Windows message boxes when running in a Windows environment
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -33,18 +35,16 @@ namespace Demo_MG_MazeGame
         private const int CELL_HEIGHT = 64;
 
         // set the map size in cells
-        private const int MAP_CELL_ROW_COUNT = 9;
-        private const int MAP_CELL_COLUMN_COUNT = 9;
+        private const int MAP_CELL_ROW_COUNT = 8;
+        private const int MAP_CELL_COLUMN_COUNT = 10;
 
         // set the window size
         private const int WINDOW_WIDTH = MAP_CELL_COLUMN_COUNT * CELL_WIDTH;
         private const int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
 
         // wall objects
-        private List<Wall> walls;
-
-        // map array
-        private int[,] map;
+        private Wall wall01;
+        private Wall wall02;
 
         // player object
         private Player player;
@@ -62,7 +62,7 @@ namespace Demo_MG_MazeGame
         // declare a SpriteBatch object
         SpriteBatch spriteBatch;
 
-        public PlatformMovement()
+        public MazeGame()
         {
             graphics = new GraphicsDeviceManager(this);
 
@@ -82,12 +82,13 @@ namespace Demo_MG_MazeGame
         protected override void Initialize()
         {
             // add floors, walls, and ceilings
-            walls = new List<Wall>();
-
-            BuildMap();
+            wall01 = new Wall(Content, "wall", new Vector2(0, WINDOW_HEIGHT - CELL_HEIGHT));
+            wall01.Active = true;
+            wall02 = new Wall(Content, "wall", new Vector2(WINDOW_WIDTH - CELL_WIDTH, WINDOW_HEIGHT - CELL_HEIGHT));
+            wall02.Active = true;
 
             // add the player
-            player = new Player(Content, new Vector2(1 * CELL_WIDTH, 1 * CELL_HEIGHT));
+            player = new Player(Content, new Vector2(CELL_WIDTH * 2, WINDOW_HEIGHT - CELL_HEIGHT));
             player.Active = true;
 
             // set the player's initial speed
@@ -135,48 +136,25 @@ namespace Demo_MG_MazeGame
 
                 // move player right
                 case GameAction.PlayerRight:
-                    player.PlayerDirection = Player.Direction.Right;
-
-                    // only move player if allowed
-                    if (CanMove())
+                    if (!PlayerHitWall(wall02))
                     {
+                        player.PlayerDirection = Player.Direction.Right;
                         player.Position = new Vector2(player.Position.X + player.SpeedHorizontal, player.Position.Y);
                     }
                     break;
-
+                
                 //move player left
                 case GameAction.PlayerLeft:
-                    player.PlayerDirection = Player.Direction.Left;
-
-                    // only move player if allowed
-                    if (CanMove())
+                    if (!PlayerHitWall(wall01))
                     {
+                        player.PlayerDirection = Player.Direction.Left;
                         player.Position = new Vector2(player.Position.X - player.SpeedHorizontal, player.Position.Y);
                     }
-
                     break;
 
-                // move player up
                 case GameAction.PlayerUp:
-                    player.PlayerDirection = Player.Direction.Up;
-
-                    // only move player if allowed
-                    if (CanMove())
-                    {
-                        player.Position = new Vector2(player.Position.X, player.Position.Y - player.SpeedVertical);
-                    }
                     break;
-
-                case GameAction.PlayerDown:
-                    player.PlayerDirection = Player.Direction.Down;
-
-                    // only move player if allowed
-                    if (CanMove())
-                    {
-                        player.Position = new Vector2(player.Position.X, player.Position.Y + player.SpeedVertical);
-                    }
-                    break;
-
+                
                 // quit game
                 case GameAction.Quit:
                     Exit();
@@ -199,7 +177,8 @@ namespace Demo_MG_MazeGame
 
             spriteBatch.Begin();
 
-            DrawWalls(spriteBatch);
+            wall01.Draw(spriteBatch);
+            wall02.Draw(spriteBatch);
 
             player.Draw(spriteBatch);
 
@@ -218,6 +197,7 @@ namespace Demo_MG_MazeGame
 
             newState = Keyboard.GetState();
 
+
             if (CheckKey(Keys.Right) == true)
             {
                 playerGameAction = GameAction.PlayerRight;
@@ -225,14 +205,6 @@ namespace Demo_MG_MazeGame
             else if (CheckKey(Keys.Left) == true)
             {
                 playerGameAction = GameAction.PlayerLeft;
-            }
-            else if (CheckKey(Keys.Up) == true)
-            {
-                playerGameAction = GameAction.PlayerUp;
-            }
-            else if (CheckKey(Keys.Down) == true)
-            {
-                playerGameAction = GameAction.PlayerDown;
             }
             else if (CheckKey(Keys.Escape) == true)
             {
@@ -259,138 +231,13 @@ namespace Demo_MG_MazeGame
         }
 
         /// <summary>
-        /// check to confirm that player movement is allowed
-        /// </summary>
-        /// <returns></returns>
-        private bool CanMove()
-        {
-            bool canMove = true;
-
-            // do not allow movement into wall
-            foreach (Wall wall in walls)
-            {
-                if (WallCollision(wall))
-                {
-                    canMove = false;
-                    continue;
-                }
-            }
-
-            return canMove;
-        }
-
-        /// <summary>
         /// test for player collision with a wall object
         /// </summary>
         /// <param name="wall">wall object to test</param>
         /// <returns>true if collision</returns>
-        private bool WallCollision(Wall wall)
+        private bool PlayerHitWall(Wall wall)
         {
-            bool wallCollision = false;
-
-            // create a Rectangle object for the new move's position
-            Rectangle newPlayerPosition = player.BoundingRectangle;
-
-            // test the new move's position for a collision with the wall
-            switch (player.PlayerDirection)
-            {
-                case Player.Direction.Left:
-                    // set the position of the new move's rectangle
-                    newPlayerPosition.Offset(-player.SpeedHorizontal, 0);
-
-                    // test for a collision with the new move and the wall
-                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
-                    {
-                        wallCollision = true;
-
-                        // move player next to wall
-                        player.Position = new Vector2(wall.BoundingRectangle.Right, player.Position.Y);
-                    }
-                    break;
-
-                case Player.Direction.Right:
-                    // set the position of the new move's rectangle
-                    newPlayerPosition.Offset(player.SpeedHorizontal, 0);
-
-                    // test for a collision with the new move and the wall
-                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
-                    {
-                        wallCollision = true;
-
-                        // move player next to wall
-                        player.Position = new Vector2(wall.BoundingRectangle.Left - player.BoundingRectangle.Width, player.Position.Y);
-                    }
-                    break;
-
-                case Player.Direction.Up:
-                    // set the position of the new move's rectangle
-                    newPlayerPosition.Offset(0, -player.SpeedVertical);
-
-                    // test for a collision with the new move and the wall
-                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
-                    {
-                        wallCollision = true;
-
-                        // move player next to wall
-                        player.Position = new Vector2(player.Position.X, wall.BoundingRectangle.Bottom);
-                    }
-                    break;
-
-                case Player.Direction.Down:
-                    // set the position of the new move's rectangle
-                    newPlayerPosition.Offset(0, player.SpeedVertical);
-
-                    // test for a collision with the new move and the wall
-                    if (newPlayerPosition.Intersects(wall.BoundingRectangle))
-                    {
-                        wallCollision = true;
-
-                        // move player next to wall
-                        player.Position = new Vector2(player.Position.X, wall.BoundingRectangle.Top - player.BoundingRectangle.Height);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-
-            return wallCollision;
-        }
-
-        private void BuildMap()
-        {
-            // Note: initialized array size must equal the MAP_CELL_COLUMN_COUNT and MAP_CELL_ROW_COUNT
-            map = new int[,]
-            {
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
-
-            for (int row = 0; row < MAP_CELL_ROW_COUNT; row++)
-            {
-                for (int column = 0; column < MAP_CELL_COLUMN_COUNT; column++)
-                {
-                    if (map[row, column] == 1)
-                    {
-                        walls.Add(new Wall(Content, "wall", new Vector2(column * CELL_HEIGHT, row * CELL_WIDTH)));
-                    }
-                }
-            }
-        }
-
-        private void DrawWalls(SpriteBatch spriteBatch)
-        {
-            foreach (Wall wall in walls)
-            {
-                wall.Draw(spriteBatch);
-            }
+            return player.BoundingRectangle.Intersects(wall.BoundingRectangle);
         }
     }
 }

@@ -22,32 +22,57 @@ namespace Demo_MG_MazeGame
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class PlatformMovement : Game
+    public class MazeGame : Game
     {
         // add code to allow Windows message boxes when running in a Windows environment
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern uint MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
         // set the cell size in pixels
-        private const int CELL_WIDTH = 64;
-        private const int CELL_HEIGHT = 64;
+        public static int CELL_WIDTH = 64;
+        public static int CELL_HEIGHT = 64;
+        public static int CELL_WIDTH_SMALL_SPRITE_OFFSET = 8;
+        public static int CELL_HEIGHT_SMALL_SPRITE_OFFSET = 8;
 
         // set the map size in cells
-        private const int MAP_CELL_ROW_COUNT = 9;
+        public static int MAP_CELL_ROW_COUNT = 9;
         private const int MAP_CELL_COLUMN_COUNT = 9;
 
+        // set game info display
+        public static int GAME_INFO_DISPLAY_X_POSITION = 0;
+        public static int GAME_INFO_DISPLAY_Y_POSITION = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
+        public static int GAME_INFO_DISPLAY_HEIGHT = 192;
+
         // set the window size
-        private const int WINDOW_WIDTH = MAP_CELL_COLUMN_COUNT * CELL_WIDTH;
-        private const int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
+        public static int WINDOW_WIDTH = MAP_CELL_COLUMN_COUNT * CELL_WIDTH;
+        public static int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT + GAME_INFO_DISPLAY_HEIGHT;
 
         // wall objects
         private List<Wall> walls;
+
+        // jewel objects
+        private List<Jewel> jewels;
+
+        // death ball object
+        private DeathBall deathBall;
+
+        // score variable
+        private int score;
+
+        // lives variable
+        private int lives;
+
+        // score font 
+        private SpriteFont scoreFont;
 
         // map array
         private int[,] map;
 
         // player object
         private Player player;
+
+        // player starting position
+        private Vector2 playerStartingPosition;
 
         // variable to hold the player's current game action
         GameAction playerGameAction;
@@ -62,13 +87,13 @@ namespace Demo_MG_MazeGame
         // declare a SpriteBatch object
         SpriteBatch spriteBatch;
 
-        public PlatformMovement()
+        public MazeGame()
         {
             graphics = new GraphicsDeviceManager(this);
 
             // set the window size 
-            graphics.PreferredBackBufferWidth = MAP_CELL_COLUMN_COUNT * CELL_WIDTH;
-            graphics.PreferredBackBufferHeight = MAP_CELL_ROW_COUNT * CELL_HEIGHT;
+            graphics.PreferredBackBufferWidth = WINDOW_WIDTH;
+            graphics.PreferredBackBufferHeight = WINDOW_HEIGHT;
 
             Content.RootDirectory = "Content";
         }
@@ -84,10 +109,18 @@ namespace Demo_MG_MazeGame
             // add floors, walls, and ceilings
             walls = new List<Wall>();
 
+            // add game objects
+            jewels = new List<Jewel>();
+
+            // initialize game info
+            score = 0;
+            lives = 3;
+
             BuildMap();
 
             // add the player
-            player = new Player(Content, new Vector2(1 * CELL_WIDTH, 1 * CELL_HEIGHT));
+            playerStartingPosition = new Vector2(1 * CELL_WIDTH, 1 * CELL_HEIGHT);
+            player = new Player(Content, playerStartingPosition);
             player.Active = true;
 
             // set the player's initial speed
@@ -105,6 +138,9 @@ namespace Demo_MG_MazeGame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // load font for score
+            scoreFont = Content.Load<SpriteFont>("score_font");
 
             // Note: wall and player sprites loaded when instantiated
         }
@@ -128,6 +164,53 @@ namespace Demo_MG_MazeGame
             // get the player's current action based on a keyboard event
             playerGameAction = GetKeyboardEvents();
 
+            ManageGameStatus();
+
+            ManageGameActions(playerGameAction);
+
+            ManageGameObjects();
+
+            base.Update(gameTime);
+        }
+
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+
+            DrawWalls(spriteBatch);
+
+            DrawGameObjects(spriteBatch);
+
+            DrawGameInfo();
+
+            player.Draw(spriteBatch);
+
+            spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
+
+        private void ManageGameStatus()
+        {
+            if (lives <= 0)
+            {
+                MessageBox(new IntPtr(0), "     You have no more lives.\n              Game Over\n            Press OK to Exit.", "Game Status", 0);
+                Exit();
+            }
+        }
+
+        /// <summary>
+        /// manage all player game actions
+        /// </summary>
+        /// <param name="gameAction">player game action choice</param>
+        private void ManageGameActions(GameAction gameAction)
+        {
             switch (playerGameAction)
             {
                 case GameAction.None:
@@ -185,27 +268,68 @@ namespace Demo_MG_MazeGame
                 default:
                     break;
             }
+        }
 
-            base.Update(gameTime);
+        private void DrawGameInfo()
+        {
+            spriteBatch.DrawString(scoreFont, String.Format("Score: {0}", score), new Vector2(GAME_INFO_DISPLAY_X_POSITION + 50, GAME_INFO_DISPLAY_Y_POSITION + 50), Color.Black);
+            spriteBatch.DrawString(scoreFont, String.Format("Lives: {0}", lives), new Vector2(GAME_INFO_DISPLAY_X_POSITION + 50, GAME_INFO_DISPLAY_Y_POSITION + 80), Color.Black);
         }
 
         /// <summary>
-        /// This is called when the game should draw itself.
+        /// manage the interaction of all game objects
         /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
+        private void ManageGameObjects()
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            ManageJewels();
+            ManageDeathBalls();
 
-            DrawWalls(spriteBatch);
+        }
 
-            player.Draw(spriteBatch);
+        private void ManageDeathBalls()
+        {
+            if (player.BoundingRectangle.Intersects(deathBall.BoundingRectangle))
+            {
+                lives--;
+                player.Position = playerStartingPosition;
+            }
 
-            spriteBatch.End();
+            deathBall.Update();
+        }
 
-            base.Draw(gameTime);
+        /// <summary>
+        /// manage all jewel functions
+        /// </summary>
+        private void ManageJewels()
+        {
+            // set a default value to test against
+            int indexOfJewel = -1;
+
+            // cycle through the list of jewels to test for an collision with the player 
+            // and record the index of a jewel in the list of jewels
+            // use the continue statement to exit the foreach loop
+            foreach (Jewel jewel in jewels)
+            {
+                if (player.BoundingRectangle.Intersects(jewel.BoundingRectangle))
+                {
+                    indexOfJewel = jewels.IndexOf(jewel);
+                    continue;
+                }
+            }
+
+            // if the player collided with a jewel, handle the event
+            if (indexOfJewel != -1)
+            {
+                jewels.RemoveAt(indexOfJewel);
+                score++;
+            }
+
+            //
+            // example of using a lambda function to remove collected jewels
+            // Note: not as efficient since it does not break out of loop once the jewel is found
+            //
+            //jewels.RemoveAll(x => player.BoundingRectangle.Intersects(x.BoundingRectangle));
         }
 
         /// <summary>
@@ -360,15 +484,19 @@ namespace Demo_MG_MazeGame
         private void BuildMap()
         {
             // Note: initialized array size must equal the MAP_CELL_COLUMN_COUNT and MAP_CELL_ROW_COUNT
+            //
+            // 1 = wall
+            // 2 = green jewel
+            //
             map = new int[,]
             {
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 2, 0, 1 },
                 { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
                 { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 3, 0, 0, 0, 0, 0, 0, 1 },
                 { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 0, 1, 1, 2, 1, 1, 0, 1 },
                 { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1 }
             };
@@ -381,16 +509,52 @@ namespace Demo_MG_MazeGame
                     {
                         walls.Add(new Wall(Content, "wall", new Vector2(column * CELL_HEIGHT, row * CELL_WIDTH)));
                     }
+
+                    if (map[row, column] == 2)
+                    {
+                        jewels.Add(new Jewel(Content, Jewel.TypeName.Green, new Vector2(column * CELL_HEIGHT + CELL_HEIGHT_SMALL_SPRITE_OFFSET, row * CELL_WIDTH + CELL_WIDTH_SMALL_SPRITE_OFFSET)));
+                    }
+
+                    if (map[row, column] == 3)
+                    {
+
+                    }
                 }
             }
+
+            // add horizontal deathball
+            deathBall = new DeathBall(Content, "death_ball", new Vector2(1 * CELL_WIDTH, 4 * CELL_HEIGHT));
+            deathBall.Active = true;
+            deathBall.SpeedHorizontal = 5;
+            deathBall.SpeedVertical = 0;
+            deathBall.EndingPosition = new Vector2(7 * CELL_WIDTH, 4 * CELL_HEIGHT);
+            deathBall.Loop = true;
         }
 
+        /// <summary>
+        /// draw all walls on map
+        /// </summary>
+        /// <param name="spriteBatch">spriteBatch object</param>
         private void DrawWalls(SpriteBatch spriteBatch)
         {
             foreach (Wall wall in walls)
             {
                 wall.Draw(spriteBatch);
             }
+        }
+
+        /// <summary>
+        /// draw all game objects on map
+        /// </summary>
+        /// <param name="spriteBatch">spriteBatch object</param>
+        private void DrawGameObjects(SpriteBatch spriteBatch)
+        {
+            foreach (Jewel jewel in jewels)
+            {
+                jewel.Draw(spriteBatch);
+            }
+
+            deathBall.Draw(spriteBatch);
         }
     }
 }

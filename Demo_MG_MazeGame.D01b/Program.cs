@@ -14,7 +14,7 @@ namespace Demo_MG_MazeGame
         [STAThread]
         static void Main()
         {
-            using (var game = new PlatformMovement())
+            using (var game = new MazeGame())
                 game.Run();
         }
     }

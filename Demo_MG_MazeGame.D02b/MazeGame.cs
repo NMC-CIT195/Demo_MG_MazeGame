@@ -22,7 +22,7 @@ namespace Demo_MG_MazeGame
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class PlatformMovement : Game
+    public class MazeGame : Game
     {
         // add code to allow Windows message boxes when running in a Windows environment
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -61,7 +61,7 @@ namespace Demo_MG_MazeGame
         // declare a SpriteBatch object
         SpriteBatch spriteBatch;
 
-        public PlatformMovement()
+        public MazeGame()
         {
             graphics = new GraphicsDeviceManager(this);
 
