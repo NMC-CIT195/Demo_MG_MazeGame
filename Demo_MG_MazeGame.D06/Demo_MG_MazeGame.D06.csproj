@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ABF81B2F-73E4-4A28-8412-86E3F13D81E5}</ProjectGuid>
+    <ProjectGuid>{0AADA3A1-C1E3-44FE-89B0-BBE39D4760A8}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Demo_MG_MazeGame.D05</RootNamespace>
-    <AssemblyName>Demo_MG_MazeGame.D05</AssemblyName>
+    <RootNamespace>Demo_MG_MazeGame.D06</RootNamespace>
+    <AssemblyName>Demo_MG_MazeGame.D06</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <MonoGameContentBuilderExe>

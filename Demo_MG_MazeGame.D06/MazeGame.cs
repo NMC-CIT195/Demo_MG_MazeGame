@@ -47,6 +47,11 @@ namespace Demo_MG_MazeGame
         public static int WINDOW_WIDTH = MAP_CELL_COLUMN_COUNT * CELL_WIDTH;
         public static int WINDOW_HEIGHT = MAP_CELL_ROW_COUNT * CELL_HEIGHT + GAME_INFO_DISPLAY_HEIGHT;
 
+        // level information
+        private int level = 1;
+        private bool initializeNextLevel = true;
+        private int levelWinScore;
+
         // wall objects
         private List<Wall> walls;
 
@@ -112,20 +117,13 @@ namespace Demo_MG_MazeGame
             // add game objects
             jewels = new List<Jewel>();
 
-            // initialize game info
-            score = 0;
-            lives = 3;
-
-            BuildMap();
-
             // add the player
             playerStartingPosition = new Vector2(1 * CELL_WIDTH, 1 * CELL_HEIGHT);
             player = new Player(Content, playerStartingPosition);
             player.Active = true;
 
-            // set the player's initial speed
-            player.SpeedHorizontal = 5;
-            player.SpeedVertical = 5;
+            // initialize game info
+            score = 0;
 
             base.Initialize();
         }
@@ -161,6 +159,8 @@ namespace Demo_MG_MazeGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            ManageGameLevel();
+
             // get the player's current action based on a keyboard event
             playerGameAction = GetKeyboardEvents();
 
@@ -196,12 +196,61 @@ namespace Demo_MG_MazeGame
             base.Draw(gameTime);
         }
 
+        private void ManageGameLevel()
+        {
+            if (initializeNextLevel)
+            {
+                switch (level)
+                {
+                    // Level 1 initialization
+                    case (1):
+                        // initialize level values
+                        lives = 3;
+
+                        // set the player's initial speed
+                        player.SpeedHorizontal = 5;
+                        player.SpeedVertical = 5;
+
+                        // add everything to Level 1
+                        BuildMapLevel1();
+
+                        // reset new level flag
+                        initializeNextLevel = false;
+                        break;
+
+                    // Level 2 initialization
+                    case (2):
+                        // initialize level values
+                        lives = 3;
+
+                        // set the player's initial speed
+                        player.SpeedHorizontal = 5;
+                        player.SpeedVertical = 5;
+
+                        // add everything to Level 1
+                        BuildMapLevel2();
+
+                        // reset new level flag
+                        initializeNextLevel = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         private void ManageGameStatus()
         {
             if (lives <= 0)
             {
                 MessageBox(new IntPtr(0), "     You have no more lives.\n              Game Over\n            Press OK to Exit.", "Game Status", 0);
                 Exit();
+            }
+
+            if (score >= levelWinScore)
+            {
+                initializeNextLevel = true;
+                level++;
             }
         }
 
@@ -289,13 +338,17 @@ namespace Demo_MG_MazeGame
 
         private void ManageDeathBalls()
         {
-            if (player.BoundingRectangle.Intersects(deathBall.BoundingRectangle))
+            if (deathBall != null)
             {
-                lives--;
-                player.Position = playerStartingPosition;
+                if (player.BoundingRectangle.Intersects(deathBall.BoundingRectangle))
+                {
+                    lives--;
+                    player.Position = playerStartingPosition;
+                }
+                deathBall.Update();
             }
 
-            deathBall.Update();
+
         }
 
         /// <summary>
@@ -481,7 +534,10 @@ namespace Demo_MG_MazeGame
             return wallCollision;
         }
 
-        private void BuildMap()
+        /// <summary>
+        /// build the Level 1 map
+        /// </summary>
+        private void BuildMapLevel1()
         {
             // Note: initialized array size must equal the MAP_CELL_COLUMN_COUNT and MAP_CELL_ROW_COUNT
             //
@@ -493,11 +549,11 @@ namespace Demo_MG_MazeGame
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
                 { 1, 0, 0, 0, 0, 0, 2, 0, 1 },
                 { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 3, 0, 0, 0, 0, 0, 0, 1 },
-                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
-                { 1, 0, 1, 1, 2, 1, 1, 0, 1 },
+                { 1, 2, 1, 1, 0, 1, 1, 0, 1 },
                 { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 0, 0, 0, 2, 0, 0, 0, 1 },
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1 }
             };
 
@@ -518,13 +574,60 @@ namespace Demo_MG_MazeGame
                 }
             }
 
-            // add horizontal death ball
+            // set the score required to move to the next level
+            levelWinScore = 3;
+        }
+
+        /// <summary>
+        /// build the Level 2 map
+        /// </summary>
+        private void BuildMapLevel2()
+        {
+            // Note: initialized array size must equal the MAP_CELL_COLUMN_COUNT and MAP_CELL_ROW_COUNT
+            //
+            // 1 = wall
+            // 2 = green jewel
+            //
+            map = new int[,]
+            {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 2, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 0, 1, 1, 0, 1, 1, 0, 1 },
+                { 1, 2, 0, 0, 0, 0, 0, 2, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+
+            for (int row = 0; row < MAP_CELL_ROW_COUNT; row++)
+            {
+                for (int column = 0; column < MAP_CELL_COLUMN_COUNT; column++)
+                {
+                    // add walls
+                    if (map[row, column] == 1)
+                    {
+                        walls.Add(new Wall(Content, "wall", new Vector2(column * CELL_HEIGHT, row * CELL_WIDTH)));
+                    }
+                    // add jewels
+                    if (map[row, column] == 2)
+                    {
+                        jewels.Add(new Jewel(Content, Jewel.TypeName.Green, new Vector2(column * CELL_HEIGHT + CELL_HEIGHT_SMALL_SPRITE_OFFSET, row * CELL_WIDTH + CELL_WIDTH_SMALL_SPRITE_OFFSET)));
+                    }
+                }
+            }
+
+            // add horizontal deathball
             deathBall = new DeathBall(Content, "death_ball", new Vector2(1 * CELL_WIDTH, 4 * CELL_HEIGHT));
             deathBall.Active = true;
             deathBall.SpeedHorizontal = 5;
             deathBall.SpeedVertical = 0;
             deathBall.EndingPosition = new Vector2(7 * CELL_WIDTH, 4 * CELL_HEIGHT);
             deathBall.Loop = true;
+
+            // set the score required to move to the next level
+            levelWinScore = 5;
         }
 
         /// <summary>
@@ -550,7 +653,11 @@ namespace Demo_MG_MazeGame
                 jewel.Draw(spriteBatch);
             }
 
-            deathBall.Draw(spriteBatch);
+            if (deathBall != null)
+            {
+                deathBall.Draw(spriteBatch);
+            }
+
         }
     }
 }

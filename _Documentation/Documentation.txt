@@ -3,7 +3,7 @@ Author:			John E Velis
 Created:		11/5/2015
 Last Modified:	11/27/2015
 Note:			Demonstrations with an "a" suffix use simple player sprite
-				Demonstrations with a "b" suffix use a four player sprites, one for each direction
+				Demonstrations with a "b" suffix uses four player sprites, one for each direction
 
 Project:		D01
 Description:	Simple left and right movement and collisions with two walls
@@ -32,5 +32,9 @@ Project:		D05
 Description:	Add DeathBall class and image file to Content Builder
 				Set game constants to "public static" to allow access from the object classes
 
+Project:		D06
+Description:	Add level management variables; level, initializeNextLeve, levelWinScore
+				Add a new method for each level
+				Add conditional for drawing game elements that may not exist in a given level
 
 
