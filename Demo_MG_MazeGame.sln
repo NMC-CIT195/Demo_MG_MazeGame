@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D01b", "Demo_MG_MazeGame.D01b\Demo_MG_MazeGame.D01b.csproj", "{DF581FF9-C57D-4BDD-99E1-EC809F271310}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D05", "Demo_MG_MazeGame.D05\Demo_MG_MazeGame.D05.csproj", "{ABF81B2F-73E4-4A28-8412-86E3F13D81E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D06", "Demo_MG_MazeGame.D06\Demo_MG_MazeGame.D06.csproj", "{0AADA3A1-C1E3-44FE-89B0-BBE39D4760A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo_MG_MazeGame.D07", "Demo_MG_MazeGame.D07\Demo_MG_MazeGame.D07.csproj", "{08E3DCE1-ABA9-430A-AC97-B074325C2290}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +134,16 @@ Global
 		{0AADA3A1-C1E3-44FE-89B0-BBE39D4760A8}.Release|Mixed Platforms.Build.0 = Release|x86
 		{0AADA3A1-C1E3-44FE-89B0-BBE39D4760A8}.Release|x86.ActiveCfg = Release|x86
 		{0AADA3A1-C1E3-44FE-89B0-BBE39D4760A8}.Release|x86.Build.0 = Release|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Debug|x86.ActiveCfg = Debug|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Debug|x86.Build.0 = Debug|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Release|Any CPU.ActiveCfg = Release|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Release|Mixed Platforms.Build.0 = Release|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Release|x86.ActiveCfg = Release|x86
+		{08E3DCE1-ABA9-430A-AC97-B074325C2290}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

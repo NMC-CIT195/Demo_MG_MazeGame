@@ -37,4 +37,10 @@ Description:	Add level management variables; level, initializeNextLeve, levelWin
 				Add a new method for each level
 				Add conditional for drawing game elements that may not exist in a given level
 
+Project:		D06
+Description:	Add a player thrown projectile to destroy the death balls
+				Add a FireBall object
+				Add a CanFire property to the player and set it true on the second level initialize
+
+
 

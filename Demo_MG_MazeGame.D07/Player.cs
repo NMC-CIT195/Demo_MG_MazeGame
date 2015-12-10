@@ -10,14 +10,16 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Demo_MG_MazeGame
 {
-    public class Jewel
+    public class Player
     {
         #region ENUMS
 
-        public enum TypeName
+        public enum Direction
         {
-            Green,
-            Read
+            Left,
+            Right,
+            Up,
+            Down
         }
 
         #endregion
@@ -25,15 +27,19 @@ namespace Demo_MG_MazeGame
         #region FIELDS
 
         private ContentManager _contentManager;
-        private Texture2D _sprite;
-        private TypeName _type;
+        private Texture2D _spriteRight;
+        private Texture2D _spriteLeft;
+        private Texture2D _spriteUp;
+        private Texture2D _spriteDown;
         private int _spriteWidth;
         private int _spriteHeight;
         private Vector2 _position;
         private Vector2 _center;
         private int _speedHorizontal;
         private int _speedVertical;
+        private Direction _DirectionOfTravel;
         private Rectangle _boundingRectangle;
+        private bool _canShoot;     
         private bool _active;
 
         #endregion
@@ -44,12 +50,6 @@ namespace Demo_MG_MazeGame
         {
             get { return _contentManager; }
             set { _contentManager = value; }
-        }
-
-        public TypeName Type
-        {
-            get { return _type; }
-            set { _type = value; }
         }
 
         public Vector2 Position
@@ -81,10 +81,22 @@ namespace Demo_MG_MazeGame
             set { _speedVertical = value; }
         }
 
+        public Direction PlayerDirection
+        {
+            get { return _DirectionOfTravel; }
+            set { _DirectionOfTravel = value; }
+        }
+
         public Rectangle BoundingRectangle
         {
             get { return _boundingRectangle; }
             set { _boundingRectangle = value; }
+        }
+
+        public bool CanShoot
+        {
+            get { return _canShoot; }
+            set { _canShoot = value; }
         }
 
         public bool Active
@@ -98,31 +110,27 @@ namespace Demo_MG_MazeGame
         #region CONSTRUCTORS
 
         /// <summary>
-        /// instantiate a new Jewel
+        /// instantiate a new Player
         /// </summary>
         /// <param name="contentManager">game content manager object</param>
         /// <param name="spriteName">file name of sprite</param>
-        /// <param name="position">vector position of Jewel</param>
-        public Jewel(
+        /// <param name="position">vector position of Player</param>
+        public Player(
             ContentManager contentManager,
-            TypeName type,
             Vector2 position
             )
         {
             _contentManager = contentManager;
-            _type = type;
             _position = position;
 
-            // load the jewel image
-            if (type == TypeName.Green)
-            {
-                _sprite = _contentManager.Load<Texture2D>("green_jewel");
-            }
+            // load the Player images in for the different directions
+            _spriteLeft = _contentManager.Load<Texture2D>("player_left");
+            _spriteRight = _contentManager.Load<Texture2D>("player_right");
+            _spriteUp = _contentManager.Load<Texture2D>("player_Up");
+            _spriteDown = _contentManager.Load<Texture2D>("player_Down");
 
-            _active = true;
-            
-            _spriteWidth = _sprite.Width;
-            _spriteHeight = _sprite.Height;
+            _spriteWidth = _spriteLeft.Width;
+            _spriteHeight = _spriteLeft.Height;
 
             // set the initial center and bounding rectangle for the player
             _center = new Vector2(position.X + (_spriteWidth / 2), position.Y + (_spriteHeight / 2));
@@ -142,16 +150,23 @@ namespace Demo_MG_MazeGame
             // only draw the player if it is active
             if (_active)
             {
-                spriteBatch.Draw(_sprite, _position, Color.White);
+                if (_DirectionOfTravel == Direction.Right)
+                {
+                    spriteBatch.Draw(_spriteRight, _position, Color.White);                    
+                }
+                else if (_DirectionOfTravel == Direction.Left)
+                {
+                    spriteBatch.Draw(_spriteLeft, _position, Color.White);     
+                }
+                else if (_DirectionOfTravel == Direction.Up)
+                {
+                    spriteBatch.Draw(_spriteUp, _position, Color.White);
+                }
+                else if (_DirectionOfTravel == Direction.Down)
+                {
+                    spriteBatch.Draw(_spriteDown, _position, Color.White);
+                }
             }
-        }
-
-        /// <summary>
-        /// update each death ball
-        /// </summary>
-        public void Update()
-        {
-            Position += new Vector2(SpeedHorizontal, SpeedVertical);
         }
 
         #endregion

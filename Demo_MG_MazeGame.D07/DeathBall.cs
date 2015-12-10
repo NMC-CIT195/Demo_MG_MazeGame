@@ -10,15 +10,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Demo_MG_MazeGame
 {
-    public class Jewel
+    public class DeathBall
     {
         #region ENUMS
-
-        public enum TypeName
-        {
-            Green,
-            Read
-        }
 
         #endregion
 
@@ -26,10 +20,12 @@ namespace Demo_MG_MazeGame
 
         private ContentManager _contentManager;
         private Texture2D _sprite;
-        private TypeName _type;
         private int _spriteWidth;
         private int _spriteHeight;
         private Vector2 _position;
+        private Vector2 _startingPosition;
+        private Vector2 _endingPosition;
+        private bool _loop;
         private Vector2 _center;
         private int _speedHorizontal;
         private int _speedVertical;
@@ -46,12 +42,6 @@ namespace Demo_MG_MazeGame
             set { _contentManager = value; }
         }
 
-        public TypeName Type
-        {
-            get { return _type; }
-            set { _type = value; }
-        }
-
         public Vector2 Position
         {
             get { return _position; }
@@ -61,6 +51,24 @@ namespace Demo_MG_MazeGame
                 _center = new Vector2(_position.X + (_spriteWidth / 2), _position.Y + (_spriteHeight / 2));
                 _boundingRectangle = new Rectangle((int)_position.X, (int)_position.Y, _spriteWidth, _spriteHeight);
             }
+        }
+
+        public bool Loop
+        {
+            get { return _loop; }
+            set { _loop = value; }
+        }
+
+        public Vector2 EndingPosition
+        {
+            get { return _endingPosition; }
+            set { _endingPosition = value; }
+        }
+
+        public Vector2 StartingPositiion
+        {
+            get { return _startingPosition; }
+            set { _startingPosition = value; }
         }
 
         public Vector2 Center
@@ -98,35 +106,30 @@ namespace Demo_MG_MazeGame
         #region CONSTRUCTORS
 
         /// <summary>
-        /// instantiate a new Jewel
+        /// instantiate a new DeathBall object
         /// </summary>
         /// <param name="contentManager">game content manager object</param>
         /// <param name="spriteName">file name of sprite</param>
-        /// <param name="position">vector position of Jewel</param>
-        public Jewel(
+        /// <param name="position">vector position of Player</param>
+        public DeathBall(
             ContentManager contentManager,
-            TypeName type,
-            Vector2 position
+            string spriteName,
+            Vector2 startingPosition
             )
         {
             _contentManager = contentManager;
-            _type = type;
-            _position = position;
+            _startingPosition = startingPosition;
+            _position = startingPosition;
 
-            // load the jewel image
-            if (type == TypeName.Green)
-            {
-                _sprite = _contentManager.Load<Texture2D>("green_jewel");
-            }
+            // load the Player images in for the different directions
+            _sprite = _contentManager.Load<Texture2D>("death_ball");
 
-            _active = true;
-            
             _spriteWidth = _sprite.Width;
             _spriteHeight = _sprite.Height;
 
             // set the initial center and bounding rectangle for the player
-            _center = new Vector2(position.X + (_spriteWidth / 2), position.Y + (_spriteHeight / 2));
-            _boundingRectangle = new Rectangle((int)position.X, (int)position.Y, _spriteWidth, _spriteHeight);
+            _center = new Vector2(startingPosition.X + (_spriteWidth / 2), startingPosition.Y + (_spriteHeight / 2));
+            _boundingRectangle = new Rectangle((int)startingPosition.X, (int)startingPosition.Y, _spriteWidth, _spriteHeight);
         }
 
         #endregion
@@ -134,7 +137,7 @@ namespace Demo_MG_MazeGame
         #region METHODS
 
         /// <summary>
-        /// add Player sprite to the SpriteBatch object
+        /// draw death ball
         /// </summary>
         /// <param name="spriteBatch"></param>
         public void Draw(SpriteBatch spriteBatch)
@@ -147,10 +150,41 @@ namespace Demo_MG_MazeGame
         }
 
         /// <summary>
-        /// update each death ball
+        /// update death ball
         /// </summary>
         public void Update()
         {
+            // death ball is moving right horizontally
+            if (_speedHorizontal != 0)
+            {
+                if (_position.X > _endingPosition.X)
+                {
+                    // change directions
+                    _speedHorizontal = - _speedHorizontal;
+                }
+                else if (_position.X < _startingPosition.X)
+                {
+                    // change directions
+                    _speedHorizontal = - _speedHorizontal;
+                }
+            }
+
+            // death ball is moving vertically
+            if (_speedVertical != 0)
+            {
+                if (_position.Y > _endingPosition.Y)
+                {
+                    // change directions
+                    _speedVertical = - _speedVertical;
+                }
+                else if (_position.Y < _startingPosition.Y)
+                {
+                    // change directions
+                    _speedVertical = -_speedVertical;
+                }
+            }
+
+            // update death ball position
             Position += new Vector2(SpeedHorizontal, SpeedVertical);
         }
 

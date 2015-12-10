@@ -10,15 +10,10 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Demo_MG_MazeGame
 {
-    public class Jewel
+    public class FireBall
     {
         #region ENUMS
 
-        public enum TypeName
-        {
-            Green,
-            Read
-        }
 
         #endregion
 
@@ -26,7 +21,6 @@ namespace Demo_MG_MazeGame
 
         private ContentManager _contentManager;
         private Texture2D _sprite;
-        private TypeName _type;
         private int _spriteWidth;
         private int _spriteHeight;
         private Vector2 _position;
@@ -44,12 +38,6 @@ namespace Demo_MG_MazeGame
         {
             get { return _contentManager; }
             set { _contentManager = value; }
-        }
-
-        public TypeName Type
-        {
-            get { return _type; }
-            set { _type = value; }
         }
 
         public Vector2 Position
@@ -98,29 +86,25 @@ namespace Demo_MG_MazeGame
         #region CONSTRUCTORS
 
         /// <summary>
-        /// instantiate a new Jewel
+        /// instantiate a new FireBall
         /// </summary>
         /// <param name="contentManager">game content manager object</param>
         /// <param name="spriteName">file name of sprite</param>
-        /// <param name="position">vector position of Jewel</param>
-        public Jewel(
+        /// <param name="position">vector position of Player</param>
+        public FireBall(
             ContentManager contentManager,
-            TypeName type,
             Vector2 position
             )
         {
             _contentManager = contentManager;
-            _type = type;
             _position = position;
 
-            // load the jewel image
-            if (type == TypeName.Green)
-            {
-                _sprite = _contentManager.Load<Texture2D>("green_jewel");
-            }
+            // load the FireBall image
+            _sprite = _contentManager.Load<Texture2D>("fire_ball");
+
 
             _active = true;
-            
+
             _spriteWidth = _sprite.Width;
             _spriteHeight = _sprite.Height;
 
